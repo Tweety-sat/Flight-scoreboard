@@ -1,2 +1,2 @@
-# OPPO
-Fundamentals of software engineering
+# Information system "Flight Scoreboard"
+Course project
