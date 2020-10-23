@@ -1,0 +1,30 @@
+http://www.plantuml.com/plantuml/uml/POvDIWH138NtTOfSO2xWGaPHLwA2Ue1CLwOxK3zDab91vkvsx6uAT5CatwltNevgADPo2aD2LNX8F4xs7G2UMZwHBCFhC55iYIAW27zW0kDCYt3_DTDW__bBvM9Gpn1fzd3v0zMue74j7cveJSCbRFst5IM6fVyDJucUp-izNNzN4fVXiOvShjI4o-ZnY_XP9Uxails_Ovt9Xeba0pSnSzbcDuMr0Gw7wxKSWcFVrx9VGrzxO6V-mEuFHognvVG3
+@startuml
+class Flight{
+  Number:int
+  Scheduled arrival time:time_t
+  Expected arrival time:time_t
+  Point of departure:string
+  Point of destination:string
+  Status
+}
+
+class Board
+{
+ TableOfFlight
+}
+
+class User
+{
+  Login:string
+  Password:string
+}
+class Dispetcher
+class Admin
+class Pass
+Flight --> Board 
+Pass --> User
+Admin --> User
+Dispetcher --> User
+User -> Board
+@enduml
