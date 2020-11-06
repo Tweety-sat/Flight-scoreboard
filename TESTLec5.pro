@@ -14,52 +14,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-win32 {
-        RC_FILE += file.rc
-        OTHER_FILES += file.rc
-}
-
 SOURCES += \
-    LKUser.cpp \
-    addflight.cpp \
-    adduser.cpp \
-    adminmenu.cpp \
-    authorizaiton.cpp \
-    controllflights.cpp \
-    controllusers.cpp \
-    flight.cpp \
+    auth.cpp \
     main.cpp \
-    mainwindow.cpp \
-    registration.cpp \
-    user.cpp \
-    usermenu.cpp
+    mainwindow.cpp
 
 HEADERS += \
-    LKUser.h \
-    addflight.h \
-    adduser.h \
-    adminmenu.h \
-    authorizaiton.h \
-    config.h \
-    controllflights.h \
-    controllusers.h \
-    mainwindow.h \
-    registration.h \
-    user.h \
-    usermenu.h
+    auth.h \
+    mainwindow.h
 
 FORMS += \
-    LKUser.ui \
-    addflight.ui \
-    adduser.ui \
-    adminmenu.ui \
-    authorizaiton.ui \
-    controllflights.ui \
-    controllusers.ui \
-    mainwindow.ui \
-    registration.ui \
-    usermenu.ui
+    auth.ui \
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

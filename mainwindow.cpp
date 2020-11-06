@@ -1,48 +1,35 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "adminmenu.h"
-#include "usermenu.h"
-#include "config.h"
-
-
-#include <QFile>
-#include <QDataStream>
-
-#include <QDebug>
-
-MainWindow::MainWindow(QWidget *parent):
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+#include <QTextCharFormat>
+#include <auth.h>
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->Board_flight->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents); //Подгоняет размер ячеек таблицы
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-
 }
 
-//Администрирование
-void MainWindow::on_adminMenu_clicked()
+void MainWindow::About_Lab1()
 {
-    AdminMenu dialog(this);
-    dialog.setWindowTitle(Config::nameApplication);
-    dialog.exec();
+    auth *dg = new auth();
+    dg->show();
 }
-
-
-//Личный кабинет
-void MainWindow::on_infoUser_clicked()
+void MainWindow::on_comboBox_currentIndexChanged(int index)
 {
-    UserMenu dialog(this);
-    dialog.setWindowTitle(Config::nameApplication);
-    dialog.exec();
+    ui->calendarWidget->setFirstDayOfWeek(Qt::DayOfWeek(index+1));
+    QTextCharFormat format;
+    format.setForeground(qvariant_cast<QColor>("green"));
+    ui->calendarWidget->setWeekdayTextFormat(Qt::DayOfWeek(index+1), format);
+
+    QTextCharFormat default_color;
+        default_color.setForeground(qvariant_cast<QColor>("black"));
+        for (int i = 1; i <= 7; i++)
+        {
+            ui->calendarWidget->setWeekdayTextFormat(Qt::DayOfWeek(i), (i == index+1?format:default_color));
+        }
 }
-
-
-
-
-
-
