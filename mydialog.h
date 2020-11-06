@@ -2,6 +2,11 @@
 #define MYDIALOG_H
 
 #include <QDialog>
+#include <QComboBox>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QTextEdit>
+#include <QHBoxLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MyDialog; }
@@ -14,8 +19,15 @@ class MyDialog : public QDialog
 public:
     MyDialog(QWidget *parent = nullptr);
     ~MyDialog();
-
+private slots:
+    void Wrf();
 private:
     Ui::MyDialog *ui;
+    QComboBox *cBox = new QComboBox;
+    QPushButton *But = new QPushButton;
+    QSpinBox *sBox = new QSpinBox;
+    QTextEdit *tEdit = new QTextEdit;
+    QHBoxLayout *Hlay = new QHBoxLayout;
+
 };
 #endif // MYDIALOG_H
