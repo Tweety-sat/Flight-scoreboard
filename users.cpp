@@ -1,4 +1,4 @@
-#include "user.h"
+#include "users.h"
 
 User::User()
 {
@@ -55,8 +55,6 @@ void User::setStatus(const Status &status)
 
 bool User::upStatus()
 {
-    // Если статус пользователя равен Админу, то сообщаем о невозможности повышения статуса,
-    // т.к. статус является максимальным.
     if (m_status == Admin)
         return false;
 
@@ -70,8 +68,6 @@ bool User::upStatus()
 
 bool User::downStatus()
 {
-    // Если статус пользователя равен Пассажиру, то сообщаем о невозможности понижения статуса,
-    // т.к. статус является минимальным.
     if (m_status == Passenger)
         return false;
 
@@ -85,8 +81,12 @@ bool User::downStatus()
 
 QMap<User::Status, QString> User::getListStatus()
 {
-    return QMap<Status, QString>({ { Passenger, "Пассажир" },
-                                   { Dispatcher, "Диспетчер"} ,
-                                   { Admin, "Администратор" }
-                                 });
+    return QMap<Status, QString>
+            (
+    {
+        { Passenger, "Пассажир" },
+        { Dispatcher, "Диспетчер"},
+        { Admin, "Администратор" }
+    }
+            );
 }

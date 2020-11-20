@@ -1,5 +1,5 @@
-#ifndef USER_H
-#define USER_H
+#ifndef USERS_H
+#define USERS_H
 
 #include <QString>
 #include <QDataStream>
@@ -30,10 +30,7 @@ public:
     bool upStatus();
     bool downStatus();
 
-    // Статический метод, который возвращает список соответствий статуса его строковому типу
-    // Passenger соотвествует "Пассажир" и т.д.
-    // Сделано для простого преобразования из Перечисления (Passenger, Dispatcher, Admin) в строковый тип
-    // ("Пассажир", "Диспетчер", "Админинстратор")
+    //Статический метод, возвращающий список соответствий статуса его строковому типу
     static QMap<Status, QString> getListStatus();
 
 private:
@@ -61,4 +58,7 @@ inline QDataStream &operator>> (QDataStream &ist, User &user)
     return ist;
 }
 
-#endif // USER_H
+
+#endif // USERS_H
+
+

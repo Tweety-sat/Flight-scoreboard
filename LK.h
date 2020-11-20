@@ -1,6 +1,5 @@
-#ifndef LKUSER_H
-#define LKUSER_H
-
+#ifndef LK_H
+#define LK_H
 #include <QDialog>
 
 class User;
@@ -15,7 +14,7 @@ class InfoUser : public QDialog
 
 public:
 
-    explicit InfoUser(QWidget *parent = nullptr);
+     explicit InfoUser(const User &user, QWidget *parent = nullptr);
     ~InfoUser();
 
 
@@ -24,5 +23,4 @@ private slots:
 private:
     Ui::InfoUser *mUi;
 };
-#endif // LKUSER_H
-
+#endif // LK_H

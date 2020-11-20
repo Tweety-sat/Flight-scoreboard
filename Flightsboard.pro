@@ -15,53 +15,56 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+#Иконка приложения для всех окон
 win32 {
-        RC_FILE += file.rc
-        OTHER_FILES += file.rc
+        RC_FILE += source/file.rc
+        OTHER_FILES += source/file.rc
 }
 
+
 SOURCES += \
-    LKUser.cpp \
+    LK.cpp \
+    ManageFlight.cpp \
+    ManageUsers.cpp \
     addflight.cpp \
-    adduser.cpp \
-    adminmenu.cpp \
-    authorizaiton.cpp \
-    controllflights.cpp \
-    controllusers.cpp \
+    addusers.cpp \
+    authorization.cpp \
     flight.cpp \
     main.cpp \
+    mainwidjet.cpp \
     mainwindow.cpp \
     registration.cpp \
-    user.cpp \
-    usermenu.cpp
+    users.cpp
 
 HEADERS += \
-    LKUser.h \
+    LK.h \
+    ManageFlight.h \
+    ManageUsers.h \
     addflight.h \
-    adduser.h \
-    adminmenu.h \
-    authorizaiton.h \
+    addusers.h \
+    authorization.h \
     config.h \
-    controllflights.h \
-    controllusers.h \
+    flight.h \
+    mainwidjet.h \
     mainwindow.h \
     registration.h \
-    user.h \
-    usermenu.h
+    users.h
 
 FORMS += \
-    LKUser.ui \
+    LK.ui \
+    ManageFlight.ui \
+    ManageUsers.ui \
     addflight.ui \
-    adduser.ui \
-    adminmenu.ui \
-    authorizaiton.ui \
-    controllflights.ui \
-    controllusers.ui \
+    addusers.ui \
+    authorization.ui \
     mainwindow.ui \
-    registration.ui \
-    usermenu.ui
+    registration.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    source/file.rc \
+    source/ic.ico

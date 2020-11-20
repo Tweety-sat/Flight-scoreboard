@@ -1,48 +1,263 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "adminmenu.h"
-#include "usermenu.h"
 #include "config.h"
-
-
 #include <QFile>
 #include <QDataStream>
-
 #include <QDebug>
-
-MainWindow::MainWindow(QWidget *parent):
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+#include <LK.h>
+#include <ManageFlight.h>
+#include <flight.h>
+#include <ManageUsers.h>
+#include <QDateTime>
+MainWindow::MainWindow(User &user, QWidget *parent) :
+    QWidget(parent),
+    mUi(new Ui::MainWindow),
+    m_user(user)
 {
-    ui->setupUi(this);
-    ui->Board_flight->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents); //Подгоняет размер ячеек таблицы
+    mUi->setupUi(this);
+   // mUi->Board_flight->setStyleSheet("background-color: #FDF5E6");
+    mUi->Board_flight->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents); //Установка ширины столбца под размер содержимого
+
+    //Выделение памяти под окно с информацией о пользователе
+    m_infoDialog = new InfoUser(m_user, this);
+    m_infoDialog->setWindowTitle(Config::nameApplication);
+
+    //Если пользователь имеет статус диспетчера, то прячем кнопку управления пользователями
+    if (m_user.status() == User::Dispatcher)
+        mUi->controlusers->hide();
+
+    //Если пользователь имеет статус пассажира, то прячем кнопки управления пользователями и рейсами
+    if (m_user.status() == User::Passenger)
+    {
+        mUi->controlflight->hide();
+        mUi->controlusers->hide();
+    }
+
+    loadFlights(); // Загрузка списка рейсов из файла
+
+    mUi->time_now->setDateTime(QDateTime::currentDateTime());
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
-
+    delete mUi;
+    delete m_infoDialog;
+    delete &m_user;
 }
 
-//Администрирование
-void MainWindow::on_adminMenu_clicked()
+void MainWindow::on_controlflight_clicked()
+{    
+    //Получаем список рейсов из текущего окна
+    const QList<Flight> &listFlight = qobject_cast<MainWindow*>(this)->listFlight();
+    ManageFlight dialog(listFlight, this); // Создаем окно передавая в него список.
+    dialog.setWindowTitle(windowTitle());
+    // Подключаем сигналы, такие как: добавление, редактирование и удаление рейса.
+        connect(&dialog, SIGNAL(addFlight(Flight)),
+                this, SLOT(addFlight(Flight)));
+        connect(&dialog, SIGNAL(editFlight(int, Flight)),
+                this, SLOT(editFlight(int, Flight)));
+        connect(&dialog, SIGNAL(deleteFlight(int)),
+                this, SLOT(deleteFlight(int)));
+
+    dialog.exec(); //вызываем окно
+}
+
+void MainWindow::on_controlusers_clicked()
 {
-    AdminMenu dialog(this);
-    dialog.setWindowTitle(Config::nameApplication);
+    ManageUsers dialog(this);
+    dialog.setWindowTitle(windowTitle());
+    dialog.show();
     dialog.exec();
 }
 
-
-//Личный кабинет
 void MainWindow::on_infoUser_clicked()
 {
-    UserMenu dialog(this);
-    dialog.setWindowTitle(Config::nameApplication);
-    dialog.exec();
+    // Если была нажата кнопка "Выйти из аккаунта" то окно вернет значение QDialog::Accepted
+    // Иначе же QDialog::Rejected
+    if (m_infoDialog->exec() == QDialog::Accepted)
+         emit changeUser();  // Посылаем сигнал об необходимости сменить пользователя
 }
 
+void MainWindow::addFlight(Flight flight)
+{
+    m_listFlight.append(flight); //Добавление в лист
 
+    // Сохранение в файл.
+    QFile file(Config::Flightbin);
+    file.open(QIODevice::Append);
+    QDataStream ost(&file);
+    ost << flight;
 
+    // Добавление в таблицу
+    QTableWidgetItem *item_number = new QTableWidgetItem(flight.number());
+    QTableWidgetItem *item_scheduled_arrival_time = new QTableWidgetItem(flight.scheduled_arrival_time().toString("hh:mm"));
+    QTableWidgetItem *item_expected_time = new QTableWidgetItem(flight.expected_time().toString("hh:mm"));
+    QTableWidgetItem *item_departure = new QTableWidgetItem(flight.departure());
+    QTableWidgetItem *item_destination= new QTableWidgetItem(flight.destination());
+    QTableWidgetItem *item_status= new QTableWidgetItem(flight.status());
+
+    int row = mUi->Board_flight->rowCount();
+    mUi->Board_flight->insertRow(row); //Вставление строки в таблицу
+    //Установка элементов таблицы в саму таблицу
+    mUi->Board_flight->setItem(row, 0, item_number);
+    mUi->Board_flight->setItem(row, 1, item_departure);
+    mUi->Board_flight->setItem(row, 2, item_destination);
+    mUi->Board_flight->setItem(row, 3, item_scheduled_arrival_time );
+    mUi->Board_flight->setItem(row, 4, item_expected_time );
+    mUi->Board_flight->setItem(row, 5, item_status);
+
+}
+
+void MainWindow::editFlight(int row, Flight flight)
+{
+    m_listFlight[row] = flight;//изменение данных в листе
+
+    //Перезапись_Данных
+    QFile read_file(Config::Flightbin); //основной файл
+    if (read_file.open(QIODevice::ReadOnly)) //его открытие для чтения
+    {
+        QFile write_file("flight_file"); //Файл-буфер
+        write_file.open(QIODevice::WriteOnly); //Файл-буфер открываем для записи
+
+        //создание потоков для чтения  и записи
+        QDataStream read_ist(&read_file);
+        QDataStream write_ist(&write_file);
+
+        int countSeats = 0;
+        //Считывание и запись
+        while (!read_ist.atEnd())
+        {
+            Flight bFlight;
+            read_ist >> bFlight;
+
+            if (countSeats++ == row)
+            {
+                bFlight = flight;
+            }
+
+            write_ist << bFlight;
+        }
+        // Закрытие основного файла и его удаление
+        read_file.close();
+        read_file.remove();
+        //Закрытие буфер-файла и его переименовывание
+        write_file.close();
+        write_file.rename(Config::Flightbin);
+    }
+    //Посылаем данные в таблицу
+    mUi->Board_flight->item(row, 0)->setText(flight.number());
+    mUi->Board_flight->item(row, 1)->setText(flight.departure());
+    mUi->Board_flight->item(row, 2)->setText(flight.destination());
+    mUi->Board_flight->item(row, 3)->setText(flight.scheduled_arrival_time().toString("hh:mm"));
+    mUi->Board_flight->item(row, 4)->setText(flight.expected_time().toString("hh:mm") );
+    mUi->Board_flight->item(row, 5)->setText(flight.status());
+}
+
+void MainWindow::deleteFlight(int row)
+{
+    m_listFlight.removeAt(row);// Удаляем рейс из листа
+
+    //Перезапись данных
+    QFile read_file(Config::Flightbin); //Основной файл
+    if (read_file.open(QIODevice::ReadOnly)) //открываем его для чтения
+    {
+        QFile write_file("flight_file"); //файл-буфер
+        write_file.open(QIODevice::WriteOnly); //открытие его для записи
+
+        //создание потоков
+        QDataStream read_ist(&read_file);
+        QDataStream write_ist(&write_file);
+
+        int countReads = 0;
+        //Начало считывания
+        while (!read_ist.atEnd())
+        {
+            Flight bFlight;
+            read_ist >> bFlight;
+            if (countReads++ != row)
+            {
+                write_ist << bFlight;
+            }
+        }
+        //закрытие основного файла и его удаление
+        read_file.close();
+        read_file.remove();
+        //Закрытие буфер-файла и его переименование
+        write_file.close();
+        write_file.rename(Config::Flightbin);
+    }
+    mUi->Board_flight->removeRow(row); //Удаление соответствующей строки из таблицы
+}
+
+const QList<Flight> &MainWindow::listFlight() const
+{
+    return m_listFlight;
+}
+
+// Загрузка рейсов
+void MainWindow::loadFlights()
+{
+    m_listFlight.clear(); //очистка листа
+
+    //считывание с файла
+    QFile file(Config::Flightbin);
+    if (file.open(QIODevice::ReadOnly)) {
+        QDataStream ist(&file);
+        while (!ist.atEnd()) {
+            Flight flight;
+            ist >> flight;
+            m_listFlight.append(flight);
+        }
+    }
+
+    int row = 0;
+    foreach (const Flight &flight, m_listFlight) {
+    // Создаем элементы таблицы с нужным текстом
+        QTableWidgetItem *item_number = new QTableWidgetItem(flight.number());
+        QTableWidgetItem *item_departure  = new QTableWidgetItem(flight.departure());
+        QTableWidgetItem *item_destination  = new QTableWidgetItem(flight.destination());
+        QTableWidgetItem * item_expected_time= new QTableWidgetItem(flight.expected_time ().toString("hh:mm"));
+        QTableWidgetItem *item_scheduled_arrival_time= new QTableWidgetItem(flight.scheduled_arrival_time().toString("hh:mm"));
+        QTableWidgetItem *item_status= new QTableWidgetItem(flight.status());
+
+        mUi->Board_flight->insertRow(row);// Вставка строки в таблицу
+        // Устанавка элементов таблицы в саму таблицу
+        mUi->Board_flight->setItem(row, 0, item_number);
+        mUi->Board_flight->setItem(row, 1, item_departure );
+        mUi->Board_flight->setItem(row, 2, item_destination );
+        mUi->Board_flight->setItem(row, 3, item_scheduled_arrival_time);
+        mUi->Board_flight->setItem(row, 4, item_expected_time );
+        mUi->Board_flight->setItem(row, 5, item_status);
+        row++;
+    }
+}
+
+void MainWindow::on_lineFind_textChanged(const QString &text)
+{
+    QStringList listStr = text.split(" ");
+    listStr.removeAll(QString());
+
+    for (int i = 0; i < m_listFlight.size(); i++) {
+        mUi->Board_flight->showRow(i);
+    }
+
+    int row = 0;
+    foreach (const Flight &flight, m_listFlight) {
+        int count = 0;
+        foreach (const QString &str, listStr) {
+            if (flight.number().contains(str) ||
+                flight.departure().contains(str) ||
+                flight.destination().contains(str) ||
+                flight.status().contains(str)) {
+                count++;
+            }
+        }
+        if (count != listStr.size()) {
+            mUi->Board_flight->hideRow(row);
+        }
+        row++;
+    }
+}
 
 
 
