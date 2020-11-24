@@ -3,7 +3,7 @@
 #include <QWidget>
 #include "users.h"
 #include <flight.h>
-
+#include <QTableWidgetItem>
 class InfoUser;
 
 namespace Ui {

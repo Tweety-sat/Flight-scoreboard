@@ -14,7 +14,6 @@ class ManageFlight : public QDialog
 
 public:
 
-    //конструктор получит: ссылку на список рейсов из mainwindow
     explicit ManageFlight(const QList<Flight> &listFlight, QWidget *parent = nullptr);
     ~ManageFlight();
 

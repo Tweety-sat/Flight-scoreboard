@@ -24,10 +24,8 @@ const User &AddUsers::getUser() const
     return m_user;
 }
 
-//Проверка на существование логина
 bool AddUsers::isLoginExists(const QString &login)
 {
-    //Загружаем данные о пользователях
     QFile file(Config::Usersbin);
     if (file.exists())
     {
@@ -54,14 +52,11 @@ bool AddUsers::isLoginExists(const QString &login)
 
 void AddUsers::accept()
 {
-    // Получаем введенные данные
     const QString login = mUi->L_login->text();
     const QString password = mUi->L_password->text();
 
-    // Преобразуем статус из QString в необходимый тип (Status)
     User::Status status = User::getListStatus().key(mUi->L_status->currentText());
 
-    //Проверка на корректность логина и пароля
     if (login.isEmpty() || password.isEmpty())
     {
         mUi->Error->setText("Ошибка: необходимо заполнить все поля!");
@@ -81,7 +76,6 @@ void AddUsers::accept()
     }
     else
     {
-        //При успешной проверка загружаем данные
         m_user.setData(login, password, status);
         QDialog::accept();
     }

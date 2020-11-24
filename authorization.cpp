@@ -12,11 +12,10 @@ SignIn::SignIn(QWidget *parent) :
     mUi(new Ui::SignIn)
 {
     mUi->setupUi(this);
-    // Соединяем кнопку "Создать пользователя" с сигналом открытия окна регистрации.
-    // Далее этот сигнал будет передавать главному окну, чтобы тот открыл окно регистрации.
 
-    connect(mUi->registr, SIGNAL(clicked()), //Соединение кнопки создания пользователя и сигнала открытия окна регистрации
-            this, SIGNAL(openRegistration())); //Сигнал передает mainwindow о необходимости открыть окно регистрации
+
+    connect(mUi->registr, SIGNAL(clicked()),
+            this, SIGNAL(openRegistration()));
 }
 
 SignIn::~SignIn()
@@ -24,36 +23,34 @@ SignIn::~SignIn()
     delete mUi;
 }
 
-//Проверка корректности введенных данных
 User *SignIn::checkUser(const QString &login, const QString &password)
 {
     QFile file(Config::Usersbin);
-    if (file.exists()) //если файл существует, то
+    if (file.exists())
     {
-        User *user = nullptr; //Создаем новый указатель, если пользователь  не будет найден, то указатель остантся нулевым
-
-        //Успешность открытия файла. При неудаче выводится ошибка
+        User *user = nullptr;
         if (!file.open(QIODevice::ReadOnly))
         {
             mUi->labelError->setText("Ошибка: открытие файла невозможно!");
             return nullptr;
         }
 
-        QDataStream ist(&file); // Создаем поток для упрощенного считывания данных из файла.
+        QDataStream ist(&file);
 
         while (!ist.atEnd())
         {
-            //считывание данных пользователя
+
             User buf_user;
             ist >> buf_user;
-            if (buf_user.login() == login && buf_user.password() == password) //Если считанные данные совпали с веденными, то
+            if (buf_user.login() == login && buf_user.password() == password)
             {
 
-                user = new User(buf_user);// Выделяем нулевому указателю память под объект User, присваиваем значение
-                return user; //И вовзращаем его
+                user = new User(buf_user);
+                return user;
             }
         }
-        return user; // Если пользователь не был найден, возвращаем нулевой указатель.
+
+        return user;
     }
     else
         return nullptr;
@@ -61,9 +58,7 @@ User *SignIn::checkUser(const QString &login, const QString &password)
 
 void SignIn::on_sign_clicked()
 {
-    mUi->labelError->clear(); //Очищаем лейбл ошибок
-
-    // Считываем введенные данные в переменные
+    mUi->labelError->clear();
     const QString login = mUi->Llog->text();
     const QString password = mUi->Lpass->text();
 
@@ -83,9 +78,11 @@ void SignIn::on_sign_clicked()
     else
         {
         User *user = checkUser(login, password); // Создаем указатель на объект User, который приравниваем возвращаемому типу метода
+
+        if (!checkUser(login, password)) mUi->labelError->setText("Ошибка: 11!");
         if (user == nullptr) //данные введены неверно
         {
-            mUi->labelError->setText("Ошибка: введены неккоректные данные!");
+            mUi->labelError->setText("Ошибка: неправильный логин или пароль!");
         }
         else
         {

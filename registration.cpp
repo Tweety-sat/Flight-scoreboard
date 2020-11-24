@@ -12,14 +12,14 @@ SignUp::SignUp(TypeRegistration typeReg, QWidget *parent) :
     mUi(new Ui::SignUp)
 {
     mUi->setupUi(this);
-    if (typeReg == Admin)  //Если регистрируется администратор,
+    if (typeReg == Admin)
     {
       mUi->label->setText("Регистрация администратора");
-      mUi->auth->hide(); //то "прячем" кнопку авторизации
+      mUi->auth->hide();
     }
     m_typeReg = typeReg;
 
-    //соединяем кнопку авторизации с сигналом открытия окна авторизации данный сигнал передаст главному окну, что необходимо открыть окно авторизации
+
     connect(mUi->auth, SIGNAL(clicked()),
            this, SIGNAL(openAuthorization()));
 }
@@ -30,20 +30,19 @@ SignUp::~SignUp()
 }
 
 
-//если вернет true, то логин существует и в последствии будет выведена ошибка
 bool SignUp::isLoginExists(const QString &login)
 {
     QFile file(Config::Usersbin);
-    if (file.exists()) //если файл существует
+    if (file.exists())
     {
-        if (!file.open(QIODevice::ReadOnly)) //если не удалось открыть файл
+        if (!file.open(QIODevice::ReadOnly))
         {
             mUi->label_error->setText("Ошибка: чтение файла невозможно!");
             return false;
         }
-        //создаем поток
+
         QDataStream ist(&file);
-        //пока не конец файла
+
         while (!ist.atEnd())
         {
             //считывание данных
@@ -65,12 +64,11 @@ bool SignUp::isLoginExists(const QString &login)
 void SignUp::on_accept_clicked()
 {
     mUi->label_error->clear(); //очистка лейбла ошибок
-    //Запись введенных данных в переменные
     const QString login = mUi->log->text();
     const QString password = mUi->pass->text();
     const QString repeatPassword = mUi->reppass->text();
 
-    //проверка на корректность
+
     if (login.isEmpty() || password.isEmpty() || repeatPassword.isEmpty())
     {
         mUi->label_error->setText("Ошибка: заполните все поля!");
@@ -100,10 +98,8 @@ void SignUp::on_accept_clicked()
                   m_typeReg == Admin ? User::Admin : User::Passenger);
 
         QFile file(Config::Usersbin);
-        // Открываем файл с флагом Append, который сообщает, что данные будут дописываться в файл
         file.open(QIODevice::Append);
         QDataStream ost(&file);
-        //запись пользователя
         ost << user;
 
         emit openAuthorization(); // Посылаем сигнал об открытии окна авторизации

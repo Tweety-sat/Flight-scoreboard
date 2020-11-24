@@ -156,11 +156,6 @@
        </property>
        <item>
         <property name="text">
-         <string/>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>Отложен</string>
         </property>
        </item>
