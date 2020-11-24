@@ -14,6 +14,7 @@ ManageUsers::ManageUsers(QWidget *parent) :
 {
     mUi->setupUi(this);
 
+    // Считывание данных о пользователях из файла и перенос их в таблицу
     QFile file(Config::Usersbin);
     if (file.open(QIODevice::ReadOnly)) {
         QDataStream ist(&file);
@@ -23,9 +24,12 @@ ManageUsers::ManageUsers(QWidget *parent) :
             ist >> user;
             m_listUsers.append(user);
 
-            QTableWidgetItem *item_login = new QTableWidgetItem(user.login());
-            QTableWidgetItem *item_status = new QTableWidgetItem(user.statusString());
-            mUi->TableUsers->insertRow(row);
+            // Создание элементов таблицы с нужным текстом
+            QTableWidgetItem *item_login = new QTableWidgetItem(user.login()); //Логин
+            QTableWidgetItem *item_status = new QTableWidgetItem(user.statusString()); //статус
+
+            mUi->TableUsers->insertRow(row);// Вставка строки
+            // Установка элементов в таблицу
             mUi->TableUsers->setItem(row, 0, item_login);
             mUi->TableUsers->setItem(row, 1, item_status);
             row++;
@@ -40,35 +44,47 @@ ManageUsers::~ManageUsers()
 
 void ManageUsers::slotUpDownStatus()
 {
+    //Используем один общий слот для повышения и понижения статуса
+    // qobject_cast<> преобразует объект к нужному типу.
+    // sender() — функция, возвращающая указатель на объект который вызвал этот слот.
+    // По умолчанию sender() возвращает объект типа QObject, именно поэтому мы преобразуем его в QPushButton.
     QPushButton *btn = qobject_cast<QPushButton*>(sender());
 
     int currentRow = mUi->TableUsers->currentRow();
-    if (currentRow != -1)
+    if (currentRow != -1) //currentRow возвращает -1, те если строка не выбрана. Т.е. данная строка проверяет выбран ли пользователь
     {
+        // Получаем данные из выбранной строки
         const QString login = mUi->TableUsers->item(currentRow, 0)->text();
         const QString status = mUi->TableUsers->item(currentRow, 1)->text();
 
         if (status == "Администратор" && countAdmins() <= 1) //если выбранный пользователь имеет статус администратора, но при этом это единственный администратор в системе,
         {
-            QMessageBox::warning(this, windowTitle(), "Ошибка: не удалось изменить статус пользователя!");
+            QMessageBox::warning(this, windowTitle(), "Ошибка: не удалось изменить статус пользователя!"); //то выводится ошибка о невозможности понизить пользователя
             return;
         }
 
-        QFile read_file(Config::Usersbin);
-        if (read_file.open(QIODevice::ReadOnly)) {
-            QFile write_file("buf_file_users");
-            write_file.open(QIODevice::WriteOnly);
+        // Перезапись_Данных
+        // Открываем файл со всеми пользователями и одновременно создаем буфер-файл в который в дальнейшем будем переписывать данные из основного файла.
+        // После удаляем основной файл с пользователями, а буфер-файл переименуем под название основного файла.
 
+        //Перезапись данных
+        QFile read_file(Config::Usersbin); //Основной файл
+        if (read_file.open(QIODevice::ReadOnly)) { //Открываем его для чтения
+            QFile write_file("buf_file_users"); //буфер-файл
+            write_file.open(QIODevice::WriteOnly); //Открываем его для записи
+
+            //Создание потоков
             QDataStream read_ist(&read_file);
             QDataStream write_ist(&write_file);
 
+            //Начало считывание
             while (!read_ist.atEnd())
             {
                 User user;
                 read_ist >> user;
 
                 if (user.login() == login)
-                {
+                {    // Если логин считанного пользователя совпал с логином редактируемого пользователя
                     if (btn->objectName() == "up") //если была нажата кнопка повышения статуса (проверка через имя объекта)
                     {
 
@@ -94,10 +110,10 @@ void ManageUsers::slotUpDownStatus()
                 }
                 write_ist << user; //запсь пользователя в файл-буфер
             }
-
+            //Закрываем основной файли и удаляем его
             read_file.close();
             read_file.remove();
-
+            //Закрываем файл-буфер и переименовываем его
             write_file.close();
             write_file.rename(Config::Usersbin);
         }
@@ -118,12 +134,12 @@ void ManageUsers::on_delete_2_clicked()
         const QString status = mUi->TableUsers->item(currentRow, 1)->text();
 
         if (status == "Администратор" && countAdmins() <= 1)
-        {
+        { // Если выбранный пользователь единтсвенный администратор, то оповещаем об этом отедльным предупреждающим окном, действия не производятся
             QMessageBox::warning(this, windowTitle(),
                                  "Ошибка: не удалось изменить статус пользователя!");
             return;
         }
-        mUi->TableUsers->removeRow(currentRow);
+        mUi->TableUsers->removeRow(currentRow); // Удаление строки из таблицы с выбранным пользователем
 
         //перезапись данных
         QFile read_file(Config::Usersbin);
@@ -140,7 +156,7 @@ void ManageUsers::on_delete_2_clicked()
                 User user;
                 read_ist >> user;
 
-                if (user.login() != login)
+                if (user.login() != login) 	// Перезаписываем все данные кроме тех, когда логины совпадут. Таким образом, удалим выбранного пользователя
                 {
                     write_ist << user;
                 }
@@ -152,7 +168,7 @@ void ManageUsers::on_delete_2_clicked()
             write_file.rename(Config::Usersbin);
         }
     }
-    else
+    else //если пользователь не выбран
     {
         QMessageBox::warning(this, windowTitle(),
                              "Ошибка: Необходимо выбрать пользователя!");
@@ -161,25 +177,27 @@ void ManageUsers::on_delete_2_clicked()
 
 void ManageUsers::on_add_clicked()
 {
-
+    // Создание окна для добавления пользователя
     AddUsers dialog(this);
     dialog.setWindowTitle(windowTitle());
 
+    // Вызываем открытие окна, и если окно было успешно закрыто (был добавлен пользователь)
     if (dialog.exec() == QDialog::Accepted)
     {
         const User &user = dialog.getUser(); // Передаем из окна данные о пользователе
 
-
+        // Записываем данные в файл
         QFile file(Config::Usersbin);
         file.open(QIODevice::Append);
         QDataStream ost(&file);
         ost << user;
 
-
+        // Добавление данных о новом пользователе в таблицу
         QTableWidgetItem *item_login = new QTableWidgetItem(user.login());
         QTableWidgetItem *item_status = new QTableWidgetItem(user.statusString());
 
         int row = mUi->TableUsers->rowCount(); //создание строки
+        //занесение данных в созданную строку таблицы
         mUi->TableUsers->insertRow(row);
         mUi->TableUsers->setItem(row, 0, item_login);
         mUi->TableUsers->setItem(row, 1, item_status);

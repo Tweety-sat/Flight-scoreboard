@@ -27,7 +27,8 @@ ManageFlight::ManageFlight(const QList<Flight> &listFlight, QWidget *parent) :
         QTableWidgetItem *item_destination= new QTableWidgetItem(flight.destination());
         QTableWidgetItem *item_expected_time = new QTableWidgetItem(flight.expected_time().toString("hh:mm"));
         QTableWidgetItem *item_scheduled_arrival_time = new QTableWidgetItem(flight.scheduled_arrival_time().toString("hh:mm"));
-
+        QTableWidgetItem *item_status= new QTableWidgetItem(flight.status());
+        QTableWidgetItem *item_st= new QTableWidgetItem(flight.edit());
 
         mUi->TableFlight->insertRow(row); //вставка строки
         //установка элементов таблицы в саму таблицу по строкам
@@ -36,6 +37,8 @@ ManageFlight::ManageFlight(const QList<Flight> &listFlight, QWidget *parent) :
         mUi->TableFlight->setItem(row, 2, item_destination );
         mUi->TableFlight->setItem(row, 3,  item_scheduled_arrival_time);
         mUi->TableFlight->setItem(row, 4, item_expected_time );
+        mUi->TableFlight->setItem(row, 5, item_status);
+        mUi->TableFlight->setItem(row, 6, item_st);
         row++;
     }
 }
@@ -62,7 +65,8 @@ void ManageFlight::on_lineFind_textChanged(const QString &text)
         {
             if (flight.number().contains(str) ||
                 flight.departure().contains(str) ||
-                flight.destination().contains(str))
+                flight.destination().contains(str) ||
+                flight.status().contains(str))
             {
                 count++;
             }
@@ -88,7 +92,7 @@ void ManageFlight::on_add_clicked()
     {
         //
         emit addFlight(flight); //подается сигнал, который подключен к MainWindow  на то, что был создан новый рейс
-
+        flight.edit()=QDateTime::currentDateTime().toString("hh.mm");
         //обновление таблицы в текущем окне
         //создание элементов таблицы с нужным содержимым
         QTableWidgetItem *item_number = new QTableWidgetItem(flight.number());
@@ -96,6 +100,8 @@ void ManageFlight::on_add_clicked()
         QTableWidgetItem *item_destination= new QTableWidgetItem(flight.destination());
         QTableWidgetItem *item_scheduled_arrival_time = new QTableWidgetItem(flight.scheduled_arrival_time().toString("hh:mm"));
         QTableWidgetItem *item_expected_time = new QTableWidgetItem(flight.expected_time().toString("hh:mm"));
+        QTableWidgetItem *item_status= new QTableWidgetItem(flight.status());
+        QTableWidgetItem *item_st= new QTableWidgetItem(flight.edit());
         int row = mUi->TableFlight->rowCount();
         mUi->TableFlight->insertRow(row); //вставка строки в таблицу
         //Установка элементов таблицы в саму таблицу
@@ -104,6 +110,8 @@ void ManageFlight::on_add_clicked()
         mUi->TableFlight->setItem(row, 2, item_destination );
         mUi->TableFlight->setItem(row, 3, item_scheduled_arrival_time);
         mUi->TableFlight->setItem(row, 4, item_expected_time  );
+        mUi->TableFlight->setItem(row, 5, item_status);
+        mUi->TableFlight->setItem(row, 6, item_st);
     }
 }
 
@@ -112,10 +120,11 @@ void ManageFlight::on_del_clicked()
     int currentRow = mUi->TableFlight->currentRow();
     if (currentRow != -1)
     {
-
+        // Посылается сигнал в главный класс, который сообщает об необходимости удалить рейс из списка
+        // Главный класс обновляет таблицу и происходит перезапись в файл.
         emit deleteFlight(currentRow);
 
-
+        // Удаление строки из таблицы для текущего окна
         mUi->TableFlight->removeRow(currentRow);
     }
     else
@@ -129,8 +138,11 @@ void ManageFlight::on_edit_clicked()
     int currentRow = mUi->TableFlight->currentRow(); // Определяем какая строка была выбрана для редактирования
     if (currentRow != -1) //если строка не будет выбрана, то будет currentRow=-1. Т.е. в данной строке проверяем выбрана ли строка
     {
-
+        //Создание копии выбранного рейса
         Flight flight = m_listFlight[currentRow];
+
+        // Создание окна и передача ссылки на объект поезда
+        // Установка значения что рейс будет "Редактироваться"
         AddFlight dialog(&flight, m_listFlight, AddFlight::Edit, this);
         dialog.setWindowTitle(windowTitle());
 
@@ -139,11 +151,14 @@ void ManageFlight::on_edit_clicked()
         {
             emit editFlight(currentRow, flight); //Посылается сигнал в главный класс, в котором будет выполнена перезапись в файл и обновлена таблица. Передаем изменяемую строку и новые данные рейса
             //изменение данных таблицы для текущего окна
+            flight.edit()=QDateTime::currentDateTime().toString("hh.mm");
             mUi->TableFlight->item(currentRow, 0)->setText(flight.number());
             mUi->TableFlight->item(currentRow, 1)->setText(flight.departure());
             mUi->TableFlight->item(currentRow, 2)->setText(flight.destination());
             mUi->TableFlight->item(currentRow, 3)->setText(flight.scheduled_arrival_time().toString("hh:mm") );
             mUi->TableFlight->item(currentRow, 4)->setText(flight.expected_time().toString("hh:mm"));
+            mUi->TableFlight->item(currentRow, 5)->setText(flight.status());
+            mUi->TableFlight->item(currentRow, 6)->setText(flight.edit());
 
         }
     }

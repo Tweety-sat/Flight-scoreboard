@@ -9,6 +9,7 @@ InfoUser::InfoUser(const User &user, QWidget *parent) :
 
 {
     mUi->setupUi(this);
+    // Выводим информацию на виджеты, при этом пароль маскируем звездочками
     mUi->Llogin->setText(user.login());
 
     QString pass = "";
