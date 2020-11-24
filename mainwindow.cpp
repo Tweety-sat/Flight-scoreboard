@@ -37,7 +37,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_controlflight_clicked()
-{    
+{
     const QList<Flight> &listFlight = qobject_cast<MainWindow*>(this)->listFlight();
     ManageFlight dialog(listFlight, this); // Создаем окно передавая в него список.
     dialog.setWindowTitle(windowTitle());
