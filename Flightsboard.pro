@@ -16,10 +16,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 #Иконка приложения для всех окон
-win32 {
-        RC_FILE += source/file.rc
-        OTHER_FILES += source/file.rc
-}
 
 
 SOURCES += \
