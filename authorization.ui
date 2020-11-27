@@ -129,6 +129,9 @@
        <bold>false</bold>
       </font>
      </property>
+     <property name="whatsThis">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если вам не удается войти в свой аккаунт, обратитесь за помощью к администратору.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="styleSheet">
       <string notr="true">QLabel { color: rgb(200, 0, 0); } </string>
      </property>
