@@ -17,10 +17,11 @@ public:
     - ожидаемое время прилета;
     - пункт вылета;
     - пункт назначения;
-    - статус рейса (отложен, вылетел, прилетел).*/
+    - статус рейса (отложен, вылетел, прилетел).
+    - Время изменения данных*/
 
-    Flight(QString number, const QTime scheduled_arrival_time, const QTime expected_time , const QString departure, const QString destination);
-    void setData(QString number, const QTime scheduled_arrival_time, const QTime expected_time, const QString departure, const QString destination);
+    Flight(QString number, const QTime scheduled_arrival_time, const QTime expected_time , const QString departure, const QString destination, const QString status, const QString edit);
+    void setData(QString number, const QTime scheduled_arrival_time, const QTime expected_time, const QString departure, const QString destination, const QString status, const QString edit);
 
     QString number() const;
     void setNumber(const QString &number);
@@ -37,7 +38,11 @@ public:
     QString destination() const;
     void setDDestination(const QString &destination);
 
+    QString status() const;
+    void setSStatus(const QString &status);
 
+    QString edit() const;
+    void setedit(const QString &status);
 
 
 private:
@@ -46,12 +51,14 @@ private:
     QTime m_expected_time;
     QString m_departure;
     QString m_destination;
+    QString m_status;
+    QString m_edit;
 };
 
 // Запись в файл
 inline QDataStream &operator<< (QDataStream &ost, const Flight &flight)
 {
-    ost << flight.number() << flight.scheduled_arrival_time() << flight.expected_time() << flight.departure() << flight.destination();
+    ost << flight.number() << flight.scheduled_arrival_time() << flight.expected_time() << flight.departure() << flight.destination() << flight.status()<<flight.edit();
     return ost;
 }
 
@@ -63,9 +70,11 @@ inline QDataStream &operator>> (QDataStream &ist, Flight &flight)
     QTime expected_time;
     QString departure;
     QString destination;
+    QString status;
+    QString edit;
 
-    ist >> number >> scheduled_arrival_time >> expected_time >> departure >> destination;
-    flight.setData(number, scheduled_arrival_time, expected_time, departure, destination);
+    ist >> number >> scheduled_arrival_time >> expected_time >> departure >> destination >> status>>edit;
+    flight.setData(number, scheduled_arrival_time, expected_time, departure, destination, status,edit);
     return ist;
 }
 
@@ -77,6 +86,8 @@ inline QTextStream &operator<< (QTextStream &ost, const Flight &flight)
         << QString("Пункт назначения: ") << flight.destination()
         << QString("Ожидаемое время прилета: ") << flight.expected_time().toString("hh:mm")
         << QString("Время прилета по расписанию: ") << flight.scheduled_arrival_time().toString("hh:mm")
+        << QString("\nСтатус рейса: ") << flight.status()
+        << QString("\nВремя ищменения рейса: ") << flight.edit()
         << QString("______Конец Рейса______");
     return ost;
 }
