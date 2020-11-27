@@ -51,13 +51,15 @@ void MainWindow::on_controlflight_clicked()
     const QList<Flight> &listFlight = qobject_cast<MainWindow*>(this)->listFlight();
     ManageFlight dialog(listFlight, this); // Создаем окно передавая в него список.
     dialog.setWindowTitle(windowTitle());
-    // Подключаем сигналы, такие как: добавление, редактирование и удаление рейса.
+    // Подключаем сигналы, такие как:
         connect(&dialog, SIGNAL(addFlight(Flight)),
-                this, SLOT(addFlight(Flight)));
+                this, SLOT(addFlight(Flight))); //Добавление
+
         connect(&dialog, SIGNAL(editFlight(int, Flight)),
-                this, SLOT(editFlight(int, Flight)));
+                this, SLOT(editFlight(int, Flight))); //Редактирование
+
         connect(&dialog, SIGNAL(deleteFlight(int)),
-                this, SLOT(deleteFlight(int)));
+                this, SLOT(deleteFlight(int))); //И удаление рейса
 
     dialog.exec(); //вызываем окно
 }
@@ -82,7 +84,7 @@ void MainWindow::addFlight(Flight flight)
 {
     m_listFlight.append(flight); //Добавление в лист
 
-    // Сохранение в файл.
+    // Сохранение в файл
     QFile file(Config::Flightbin);
     file.open(QIODevice::Append);
     QDataStream ost(&file);
@@ -236,6 +238,7 @@ void MainWindow::loadFlights()
     }
 }
 
+//Строка поиска по номеру, пункту отправления, пункту назначения и статусу
 void MainWindow::on_lineFind_textChanged(const QString &text)
 {
     QStringList listStr = text.split(" ");
