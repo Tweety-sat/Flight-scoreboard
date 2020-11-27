@@ -71,24 +71,24 @@ void SignUp::on_accept_clicked()
     const QString repeatPassword = mUi->reppass->text();
 
     //проверка на корректность
-    if (login.isEmpty() || password.isEmpty() || repeatPassword.isEmpty())
+    if (login.isEmpty() || password.isEmpty() || repeatPassword.isEmpty()) //Если одно из полей пароля, логина или повтор пароля не заполнено, то пользователь будет оповещен
     {
         mUi->label_error->setText("Ошибка: заполните все поля!");
     }
-    else if (isLoginExists(login))
+    else if (isLoginExists(login)) //проверка на существование логина
     {
         if (mUi->label_error->text().isEmpty())
             mUi->label_error->setText("Ошибка: данное имя пользователя занято!");
     }
-    else if (login.size() < 5 || login.size() > 15)
+    else if (login.size() < 5 || login.size() > 15) //Проверяется соответствие длины логина
     {
         mUi->label_error->setText("Ошибка: имя пользователя должено содержать от 5 до 15 символов!");
     }
-    else if (password.size() < 5 || password.size() > 15)
+    else if (password.size() < 5 || password.size() > 15)//Проверяется соответствие длины пароля
     {
         mUi->label_error->setText("Ошибка: пароль должен содержать от 5 до 15 символов!");
     }
-    else if (password != repeatPassword)
+    else if (password != repeatPassword) //Если поля пароль и повтор пароля не совпадают, то авторизация не проходит и пользователю сообщается с помощью лейбла об ошибке
     {
         mUi->label_error->setText("Ошибка: пароли не совпадают!");
     }
@@ -106,7 +106,8 @@ void SignUp::on_accept_clicked()
         //запись пользователя
         ost << user;
 
-        emit openAuthorization(); // Посылаем сигнал об открытии окна авторизации
+         // Посылаем сигнал об открытии окна авторизации
+        emit openAuthorization();
     }
 }
 
