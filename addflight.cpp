@@ -60,6 +60,7 @@ void AddFlight::accept()
                 break;
             }
     // Перенос значений из виджетов в переменные
+
     QString number = mUi->Number->text();
     QTime scheduled_arrival_time = mUi->time_1->time();
     QTime expected_time = mUi->time_2->time();
@@ -67,6 +68,7 @@ void AddFlight::accept()
     QString destination = mUi->Nazn->text();
     QString status = status2;
     QString edit = QDateTime::currentDateTime().toString("hh.mm");
+
     //Проверка введенных данных
     if (number.isEmpty() ||
         destination.isEmpty()||

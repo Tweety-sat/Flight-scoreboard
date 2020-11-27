@@ -75,7 +75,7 @@ void AddUsers::accept()
     {
         mUi->Error->setText("Ошибка: имя пользователя должено содержать от 5 до 15 символов!");
     }
-    else if (password.size() < 6 || password.size() > 15)
+    else if (password.size() < 5 || password.size() > 15)
     {
         mUi->Error->setText("Ошибка: пароль должен содержать от 6 до 15 символов!");
     }

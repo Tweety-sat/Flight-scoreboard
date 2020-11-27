@@ -17,7 +17,7 @@ InfoUser::InfoUser(const User &user, QWidget *parent) :
     {
         pass += '*';
     }
-    mUi->LPassword->setText(pass);
+    mUi->LPassword->setText(pass); //устанавливаем пароль в поле
     mUi->Lstatus->setText(user.statusString());
 }
 
