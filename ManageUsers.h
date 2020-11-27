@@ -27,6 +27,8 @@ private slots:
 private:
     Ui::ManageUsers *mUi;
     QList<User> m_listUsers;
+
+    // Возвращает количество администраторов в системе
     int countAdmins() const;
 };
 #endif // MANAGEUSERS_H
