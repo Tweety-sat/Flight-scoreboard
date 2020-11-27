@@ -29,13 +29,11 @@ public slots:
 private slots:
 
     void on_infoUser_clicked();
-
     void on_controlflight_clicked();
-
     void on_controlusers_clicked();
-
     void on_lineFind_textChanged(const QString &arg1);
 
+    void on_pushButton_clicked();
 
 signals:
     void changeUser(); // Сигнал сообщающий об смене пользователя (закрытие текущего окна и открытие окна авторизации)

@@ -9,6 +9,7 @@
 #include <flight.h>
 #include <ManageUsers.h>
 #include <QDateTime>
+#include <QMessageBox>
 MainWindow::MainWindow(User &user, QWidget *parent) :
     QWidget(parent),
     mUi(new Ui::MainWindow),
@@ -266,4 +267,11 @@ void MainWindow::on_lineFind_textChanged(const QString &text)
     }
 }
 
-
+void MainWindow::on_pushButton_clicked()
+{
+    QMessageBox aboutDlg(this);
+     aboutDlg.setWindowTitle(Config::nameApplication);
+     aboutDlg.setIcon(QMessageBox::Information);
+     aboutDlg.setText(tr("<br></a>"));
+      aboutDlg.exec();
+}

@@ -5,7 +5,7 @@
 
 namespace Config
 {
-    static const QString nameApplication = "Табло-авиарейсов";
+    static const QString nameApplication = "Табло авиарейсов";
 
     static const QString Usersbin = "users.bin";
     static const QString Flightbin = "flights.bin";

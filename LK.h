@@ -17,7 +17,6 @@ public:
      explicit InfoUser(const User &user, QWidget *parent = nullptr);
     ~InfoUser();
 
-
 private slots:
 
 private:
