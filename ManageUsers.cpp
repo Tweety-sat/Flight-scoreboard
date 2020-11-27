@@ -18,7 +18,8 @@ ManageUsers::ManageUsers(QWidget *parent) :
     QFile file(Config::Usersbin);
     if (file.open(QIODevice::ReadOnly)) {
         QDataStream ist(&file);
-        int row = 0;
+        int row = 0; //столбец
+        //Пока файл не считан до конца, считываются данные о пользователе
         while (!ist.atEnd()) {
             User user;
             ist >> user;
@@ -204,8 +205,10 @@ void ManageUsers::on_add_clicked()
     }
 }
 
+//Функция подсчета количества админов
 int ManageUsers::countAdmins() const
 {
+    //считываем данные с довичного файла данные о каждом пользователе, увеличивая счетчик
     QFile file(Config::Usersbin);
     if (file.open(QIODevice::ReadOnly)) {
         QDataStream ist(&file);
@@ -221,6 +224,7 @@ int ManageUsers::countAdmins() const
     else return 0;
 }
 
+//Поле поиска
 void ManageUsers::on_lineFind_textChanged(const QString &arg1)
 {
     QStringList listStr = arg1.split(" ");
