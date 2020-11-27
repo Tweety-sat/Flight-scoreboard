@@ -48,7 +48,7 @@ ManageFlight::~ManageFlight()
     delete mUi;
 }
 
-//строка поиска
+//строка поиска по номеру, пункту отправлению, пункту назначения и статусу
 void ManageFlight::on_lineFind_textChanged(const QString &text)
 {
     QStringList listStr = text.split(" ");
