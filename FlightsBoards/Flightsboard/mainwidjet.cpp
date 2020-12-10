@@ -21,7 +21,7 @@ MainWidget::MainWidget(QWidget *parent)
         m_currentWidget = new SignUp(SignUp::Admin, this); //Создаем окно регистрации администратора при запуске
         //Подключаем сигнал, посылаемый из класса регистрации, активирующий окно регистрации
         connect(m_currentWidget, SIGNAL(openAuthorization()),
-                this, SLOT(slotOpenAuthorization()));
+                this, SLOT(Authorization()));
     }
     else //Если существует хотя бы один пользователь, то
     {
@@ -29,11 +29,11 @@ MainWidget::MainWidget(QWidget *parent)
 
         //Соединяем сигнал, отправленный из класса авторизации, активирубщий окно регистрации
         connect(m_currentWidget, SIGNAL(openRegistration()),
-                this, SLOT(slotOpenRegistration()));
+                this, SLOT(Registration()));
 
         //Соединяем сигнал, отправленныйиз класса авторизации, при успешном входе в систему, со слотом открытия MainWindow
         connect(m_currentWidget, SIGNAL(succesfulEntry(User*)),
-                this, SLOT(slotOpenMainWindow(User*)));
+                this, SLOT(slotMainWindow(User*)));
     }
 
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -48,32 +48,32 @@ MainWidget::~MainWidget()
     delete m_currentWidget;
 }
 
-void MainWidget::slotOpenAuthorization()
+void MainWidget::Authorization()
 {
     delete m_currentWidget; // Удаление текущего окна
     m_currentWidget = new SignIn(this); // Создание окна авторизации
 
     // Соединение необходимых сигналов со слотами
     connect(m_currentWidget, SIGNAL(openRegistration()),
-            this, SLOT(slotOpenRegistration()));
+            this, SLOT(Registration()));
     connect(m_currentWidget, SIGNAL(succesfulEntry(User*)),
-            this, SLOT(slotOpenMainWindow(User*)));
+            this, SLOT(slotMainWindow(User*)));
 
     layout()->addWidget(m_currentWidget);
 }
 
-void MainWidget::slotOpenRegistration()
+void MainWidget::Registration()
 {
     delete m_currentWidget; // Удаление текущего окна
     m_currentWidget = new SignUp(SignUp::Passenger, this); // Создание окна регистрации пассажира
 
     // Соединение необходимых сигналов со слотами
     connect(m_currentWidget, SIGNAL(openAuthorization()),
-            this, SLOT(slotOpenAuthorization()));
+            this, SLOT(Authorization()));
     layout()->addWidget(m_currentWidget); //Добавление нового окна
 }
 
-void MainWidget::slotOpenMainWindow(User *user)
+void MainWidget::slotMainWindow(User *user)
 {
     delete m_currentWidget; // Удаление текущего окна
     m_currentWidget = new MainWindow(*user, this); // Создание окна рабочего виджета
@@ -82,6 +82,6 @@ void MainWidget::slotOpenMainWindow(User *user)
 
     // Соединение необходимых сигналов со слотами
     connect(m_currentWidget, SIGNAL(changeUser()),
-            this, SLOT(slotOpenAuthorization()));
+            this, SLOT(Authorization()));
     layout()->addWidget(m_currentWidget);
 }

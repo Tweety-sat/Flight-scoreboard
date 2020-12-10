@@ -16,9 +16,9 @@ private:
     QWidget *m_currentWidget; //Текущий виджет
 
 private slots:
-    void slotOpenAuthorization();
-    void slotOpenRegistration();
-    void slotOpenMainWindow(User*);
+    void Authorization();
+    void Registration();
+    void slotMainWindow(User*);
 };
 #endif // MAINWIDGET_H
 

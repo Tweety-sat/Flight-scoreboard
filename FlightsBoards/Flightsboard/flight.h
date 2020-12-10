@@ -20,28 +20,28 @@ public:
     - статус рейса (отложен, вылетел, прилетел).
     - Время изменения данных*/
 
-    Flight(QString number, const QTime scheduled_arrival_time, const QTime expected_time , const QString departure, const QString destination, const QString status, const QString edit);
-    void setData(QString number, const QTime scheduled_arrival_time, const QTime expected_time, const QString departure, const QString destination, const QString status, const QString edit);
+    Flight(QString number, const QTime scheduled_arrival_time, const QTime expected_time ,
+           const QString departure, const QString destination, const QString status, const QString edit);
+    void setData(QString number, const QTime scheduled_arrival_time, const QTime expected_time,
+                 const QString departure, const QString destination, const QString status, const QString edit);
+
+    //Получение данных
 
     QString number() const;
-    void setNumber(const QString &number);
-
     QTime scheduled_arrival_time() const;
-    void setScheduled_arrival_time(const QTime &scheduled_arrival_time);
-
     QTime expected_time() const;
-    void setExpected_time(const QTime &expected_time);
-
     QString departure() const;
-    void setDeparture(const QString &departure);
-
     QString destination() const;
-    void setDDestination(const QString &destination);
-
     QString status() const;
-    void setSStatus(const QString &status);
-
     QString edit() const;
+
+    //установка данных
+    void setNumber(const QString &number);
+    void setScheduled_arrival_time(const QTime &scheduled_arrival_time);
+    void setExpected_time(const QTime &expected_time);
+    void setDeparture(const QString &departure);
+    void setDDestination(const QString &destination);
+    void setSStatus(const QString &status);
     void setedit(const QString &status);
 
 

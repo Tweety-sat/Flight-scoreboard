@@ -19,6 +19,7 @@ public:
 
 private slots:
 
+
 private:
     Ui::InfoUser *mUi;
 };

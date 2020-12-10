@@ -8,12 +8,14 @@ Flight::Flight()
      m_status="";
 }
 
-Flight::Flight(QString number, const QTime scheduled_arrival_time, const QTime expected_time, const QString departure, const QString destination, const QString status, const QString edit)
+Flight::Flight(QString number, const QTime scheduled_arrival_time, const QTime expected_time,
+               const QString departure, const QString destination, const QString status, const QString edit)
 {
     setData(number, scheduled_arrival_time, expected_time, departure, destination, status, edit);
 }
 
-void Flight::setData(QString number, const QTime scheduled_arrival_time, const QTime expected_time, const QString departure, const QString destination, const QString status, const QString edit)
+void Flight::setData(QString number, const QTime scheduled_arrival_time, const QTime expected_time,
+                     const QString departure, const QString destination, const QString status, const QString edit)
 {
     m_number = number;
     m_scheduled_arrival_time=scheduled_arrival_time;
@@ -22,7 +24,6 @@ void Flight::setData(QString number, const QTime scheduled_arrival_time, const Q
     m_destination=destination;
     m_status=status;
     m_edit=edit;
-
 }
 
 QString Flight::number() const

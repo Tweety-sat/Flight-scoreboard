@@ -15,7 +15,8 @@ SignUp::SignUp(TypeRegistration typeReg, QWidget *parent) :
     if (typeReg == Admin)  //Если регистрируется администратор,
     {
       mUi->label->setText("Регистрация администратора");
-      mUi->auth->hide(); //то "прячем" кнопку авторизации
+      mUi->auth->hide();
+      mUi->label_5->hide(); //то "прячем" кнопку авторизации
     }
     m_typeReg = typeReg;
 
