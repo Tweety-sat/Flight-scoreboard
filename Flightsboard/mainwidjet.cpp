@@ -19,7 +19,7 @@ MainWidget::MainWidget(QWidget *parent)
     if (!QFile(Config::Usersbin).exists())  //Если файла с пользователем не существует, то
     {
         m_currentWidget = new SignUp(SignUp::Admin, this); //Создаем окно регистрации администратора при запуске
-        //Подключаем сигнал, посылаемый из класса регистрации, активирующий окно регистрации
+        //Подключаем сигнал, посылаемый из класса регистрации, активирующий окно авторизации
         connect(m_currentWidget, SIGNAL(openAuthorization()),
                 this, SLOT(Authorization()));
     }

@@ -84,3 +84,5 @@ void AddFlight::accept()
         QDialog::accept(); //Сообщаем окну, что оно может успешно закрыться
     }
 }
+
+

@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "config.h"
 #include <QFile>
@@ -61,8 +61,8 @@ void MainWindow::on_controlflight_clicked()
 
         connect(&dialog, SIGNAL(deleteFlight(int)),
                 this, SLOT(deleteFlight(int))); //И удаление рейса
-
-    dialog.exec(); //вызываем окно
+    dialog.exec();
+    mUi->Board_flight->sortByColumn(3,Qt::AscendingOrder);
 }
 
 void MainWindow::on_controlusers_clicked()

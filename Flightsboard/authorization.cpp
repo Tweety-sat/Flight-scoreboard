@@ -84,7 +84,7 @@ void SignIn::on_sign_clicked()
         {
         User *user = checkUser(login, password); // Создаем указатель на объект User, который приравниваем возвращаемому типу метода
 
-        if (!checkUser(login, password)) mUi->labelError->setText("Ошибка: 11!");
+        if (!checkUser(login, password)) mUi->labelError->setText("Ошибка: Проверка пользователя не пройдена!");
         if (user == nullptr) //данные введены неверно
         {
             mUi->labelError->setText("Ошибка: неправильный логин или пароль!");
